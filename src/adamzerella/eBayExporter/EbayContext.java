@@ -51,12 +51,13 @@ class EbayContext {
 			context.setApiServerUrl(API_SERVER_URL);
 			context.setWSDLVersion(API_WSDLVer);
 			context.setSite(API_SITECODE);
+			context.setRouting("new");
 
 			cred = context.getApiCredential();
 			cred.seteBayToken(AUTH_TOKEN);		
 		}
 		catch(Exception e) {
-			System.err.println("FAILED TO ACCESS EBAY CONTEXT: " + e.getMessage());
+			System.err.println("EXCEPTION : 'EBAY CONTEXT' : " + e.getMessage());
 		}
 	}
 

@@ -1,20 +1,25 @@
 package adamzerella.eBayExporter;
 
-import com.ebay.sdk.call.GeteBayOfficialTimeCall;
-import com.ebay.sdk.helper.Utils;
-import com.ebay.sdk.helper.ui.GuiUtil;
+import com.ebay.soap.eBLBaseComponents.AccountEntrySortTypeCodeType;
 import com.ebay.soap.eBLBaseComponents.AccountEntryType;
 import com.ebay.soap.eBLBaseComponents.AccountHistorySelectionCodeType;
 import com.ebay.soap.eBLBaseComponents.DetailLevelCodeType;
+import com.ebay.soap.eBLBaseComponents.ItemListCustomizationType;
+import com.ebay.soap.eBLBaseComponents.ItemSortTypeCodeType;
 import com.ebay.soap.eBLBaseComponents.ItemType;
-import com.ebay.soap.eBLBaseComponents.PaginationType;
-
-import javax.swing.JTextField;
+import com.ebay.soap.eBLBaseComponents.ListingTypeCodeType;
+import com.ebay.soap.eBLBaseComponents.OrderStatusFilterCodeType;
+import com.ebay.soap.eBLBaseComponents.SiteCodeType;
 
 import com.ebay.sdk.TimeFilter;
 import com.ebay.sdk.call.GetAccountCall;
 import com.ebay.sdk.call.GetItemCall;
-import com.ebay.sdk.call.GeteBayDetailsCall;
+import com.ebay.sdk.call.GetMyeBayBuyingCall;
+import com.ebay.sdk.call.GeteBayOfficialTimeCall;
+
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class Main {
 	static EbayContext context; 
@@ -23,22 +28,31 @@ public class Main {
 		//eBay API context
 		context = new EbayContext();
 
-		//Call API with context and handle result
-		//System.out.println("Official eBay Time : " + 
-		//		new GeteBayOfficialTimeCall(context.getContext()).geteBayOfficialTime().getTime());
-		//System.out.println("[CONTEXT REQUEST] " + "\n" + new GeteBayDetailsCall(context.getContext()).getApiContext().getRequestXml() +"\n");
-		//System.out.println("[CONTEXT REPONSE] " + "\n" + new GeteBayDetailsCall(context.getContext()).getApiContext().getResponseXml());
-
 		//System.out.println(getItemTitle("322119590771")); //Vibram running shoes
-		System.out.println(getAccountUsername());
-
+		
+//		System.out.println(getAccountTitlesBetweenSpecified(
+//				new GregorianCalendar(2017, 7, 26),			//Greg is indexed from 0 -> 26/08/2017
+//				new GregorianCalendar(2017, 10, 26)));		//Greg is indexed from 0 -> 26/11/2017
+		
+		System.out.println(getMyebayBuySummary());
 	}
 
+	static Date getEbayOfficalTime() {
+		try {
+			return new GeteBayOfficialTimeCall(context.getContext()).geteBayOfficialTime().getTime();			
+		}
+		catch (Exception ex) {
+			System.err.println("EXCEPTION : 'EBAY GET OFFICAL TIME' : " + ex.getMessage());
+		}
+		return null;
+	}
+	
 	static String getItemTitle(String id) {
 		ItemType item = null;
 
 		try {
 			GetItemCall gc = new GetItemCall(context.getContext());
+			gc.setSite(SiteCodeType.AUSTRALIA); //Must match context SideCodeType
 			DetailLevelCodeType[] detailLevels = new DetailLevelCodeType[] {
 					DetailLevelCodeType.RETURN_ALL,
 					DetailLevelCodeType.ITEM_RETURN_ATTRIBUTES,
@@ -49,32 +63,54 @@ public class Main {
 			item = gc.getItem(id);
 		}
 		catch(Exception ex) {
-			System.err.println("FAILED TO GET EBAY ITEM: " + ex.getMessage());
+			System.err.println("EXCEPTION : 'EBAY GET ITEM TITLE' : " + ex.getMessage());
 		}
-
 		return item.getTitle();
 	}
 
-	static String getAccountUsername() {
+	static String getAccountTitlesBetweenSpecified(Calendar from, Calendar to) {
 		GetAccountCall acc = null;
-		String res = "";
-
+		String result = "";
+		
 		try {
 			acc = new GetAccountCall(context.getContext());
-			//acc.setPagination(new PaginationType().getAny(5));
-			//acc.setViewType(viewType);(new TimeFilter(new , arg1));
-			//acc.setDetailLevel(new DetailLevelCodeType[] { DetailLevelCodeType.RETURN_ALL});
-			//acc.setViewType(AccountHistorySelectionCodeType.LAST_INVOICE);
-			for (AccountEntryType aet : acc.getAccount()) {
-				res += aet.getTitle();
-			}
+			acc.setSite(SiteCodeType.AUSTRALIA);
+			acc.setAccountEntrySortType(AccountEntrySortTypeCodeType.ACCOUNT_ENTRY_CREATED_TIME_DESCENDING);
+			acc.setViewType(AccountHistorySelectionCodeType.BETWEEN_SPECIFIED_DATES);
+			acc.setViewPeriod(new TimeFilter(from, to));
 
+			for (AccountEntryType aet : acc.getAccount()) {
+				result += aet.getTitle();
+			}
 		}
 		catch(Exception ex) {
-			System.err.println("FAILED TO GET EBAY ACCOUNT: " + ex.getMessage());
+			System.err.println("EXCEPTION : 'EBAY GET ITEM TITLES BETWEEN DATES' : " + ex.getMessage());
 		}
-
-
-		return res;
+		return result;
 	}
+	
+	static String getMyebayBuySummary() {
+		GetMyeBayBuyingCall buy = null;
+		ItemListCustomizationType list = null;
+		
+		try {			
+			buy = new GetMyeBayBuyingCall(context.getContext());
+			buy.setSite(SiteCodeType.AUSTRALIA);
+			
+			list = new ItemListCustomizationType();
+			list.setListingType(ListingTypeCodeType.FIXED_PRICE_ITEM);
+			list.setSort(ItemSortTypeCodeType.PRICE);
+			list.setDurationInDays(100);
+			list.setInclude(true);
+			list.setOrderStatusFilter(OrderStatusFilterCodeType.ALL);
+			
+			buy.setWonList(list);
+		}
+		catch(Exception ex) {
+			System.err.println("EXCEPTION : 'myEBAY BUYING SUMMARY' : " + ex.getMessage());
+		}
+		
+		return buy.getResponseXml();
+	}
+	
 }
