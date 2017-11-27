@@ -51,8 +51,8 @@ class EbayContext {
 			context.setApiServerUrl(API_SERVER_URL);
 			context.setWSDLVersion(API_WSDLVer);
 			context.setSite(API_SITECODE);
-			context.setRouting("new");
-
+			//context.setRouting("new");
+            
 			cred = context.getApiCredential();
 			cred.seteBayToken(AUTH_TOKEN);		
 		}
@@ -66,5 +66,9 @@ class EbayContext {
 	 */
 	public ApiContext getContext() {
 		return this.context;
+	}
+	
+	public SiteCodeType getSiteCode() {
+		return this.API_SITECODE;
 	}
 }
