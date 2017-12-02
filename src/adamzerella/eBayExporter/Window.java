@@ -54,7 +54,7 @@ public class Window extends JFrame implements WindowListener,
 		
 		this.ctrl.setDeveloper(this.dev);
 
-		new Debug().Log(this.ctrl.getEbayOfficalTime());
+		//new Debug().Log(this.ctrl.getEbayOfficalTime());
 	}
 
 	private int parseInteger(String str) {
@@ -65,6 +65,7 @@ public class Window extends JFrame implements WindowListener,
 			return Integer.parseInt(str);
 		}
 	}
+	
 	/**
 	 * Updates the Properties object with the latest values.
 	 */
