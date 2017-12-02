@@ -17,14 +17,14 @@ public class Debug {
 	public void Log(String error) { 
 		System.out.println("LOG: " +"\t" + 
 				new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SS").format(cal.getTime()) + "\t" + "\t"+
-				className + " : " + Integer.valueOf(lineNumber)+ "\t"  + 
+				className + " : " + lineNumber + "\t"  + 
 				" [" + error + "]");
 	}
 	
 	public void Err(String error) { 
 		System.err.println("ERROR: " +"\t" + 
 				new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SS").format(cal.getTime()) + "\t" + "\t"+
-				className + " : " + Integer.valueOf(lineNumber)+ "\t"  + 
+				className + " : " + lineNumber + "\t"  + 
 				" [" + error + "]");
 	}
 }
