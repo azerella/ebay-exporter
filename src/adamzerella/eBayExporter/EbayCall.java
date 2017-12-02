@@ -3,8 +3,8 @@ package adamzerella.eBayExporter;
 import adamzerella.eBayExporter.util.Debug;
 
 public abstract class EbayCall {
-	private EbayContext context 		= null; 
-	private Developer dev 				= null; 
+	protected EbayContext context 		= null; 
+	protected Developer dev 				= null; 
 	
 	EbayCall(Developer dev){
 		this.dev = dev;
