@@ -21,7 +21,7 @@ public class Developer {
 		this.API_SERVER_URL = server;
 		this.API_SITECODE = SiteCodeType.AUSTRALIA;
 	}
-	
+
 	Developer(String auth, String appId, String devId, String certID, String server, SiteCodeType siteCode){
 		this.AUTH_TOKEN = auth;
 		this.API_APP_ID = appId;
@@ -85,11 +85,11 @@ public class Developer {
 
 	@Override
 	public String toString() {
-		return "{ AUTH_TOKEN: " + AUTH_TOKEN
-				+ "APP_ID: " + API_APP_ID	
-				+ "API_DEV_ID: " + API_DEV_ID	
-				+ "API_CERT_ID: " + API_CERT_ID
-				+ "API_SERVER_URL: " + API_SERVER_URL
+		return "{ AUTH_TOKEN: " + AUTH_TOKEN + "\n"
+				+ "APP_ID: " + API_APP_ID	+ "\n"
+				+ "API_DEV_ID: " + API_DEV_ID	+ "\n"
+				+ "API_CERT_ID: " + API_CERT_ID+ "\n"
+				+ "API_SERVER_URL: " + API_SERVER_URL + "\n"
 				+ "API_SITECODE: " + API_SITECODE
 				+ " }";
 	}
